@@ -22,13 +22,21 @@ const routes = [
   },
   {
     path: '/dashboard',
-    component: () => import('../views/Dashboard.vue')
+    component: () => import('../views/Dashboard.vue'),
+    children: [
+      {
+        path: 'products',
+        name: '產品列表',
+        component: () => import('../views/Products.vue')
+      }
+    ]
   }
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes
+  routes,
+  linkActiveClass: 'active'
 })
 
 export default router
