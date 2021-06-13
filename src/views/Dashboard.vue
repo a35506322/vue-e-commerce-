@@ -17,7 +17,7 @@ export default {
     // 登入未成功返回登入頁面
     this.$http.post(api, '').then((res) => {
       if (!res.data.success) {
-        this.$router.push('login')
+        this.$router.push('/login')
       }
     })
   },

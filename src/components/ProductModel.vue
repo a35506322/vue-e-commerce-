@@ -23,7 +23,7 @@
                 <label for="customFile" class="form-label">或 上傳圖片
                   <i class="fas fa-spinner fa-spin"></i>
                 </label>
-                <input type="file" id="customFile" class="form-control">
+                <input type="file" id="customFile" class="form-control" name="file-to-upload" ref="customFile" v-on:change="uploadFile">
               </div>
               <img class="img-fluid" alt="">
               <!-- 延伸技巧，多圖 -->
@@ -139,6 +139,22 @@ export default {
     },
     sure () {
       this.$emit('update-product', this.tempProduct)
+    },
+    // 將圖片轉成可用網址,這邊需要再研究一下
+    uploadFile () {
+      const imgFile = this.$refs.customFile.files[0]
+      const formData = new FormData()
+      formData.append('file-to-upload', imgFile)
+      const api = `${process.env.VUE_APP_PATH}api/${process.env.VUE_APP_API}/admin/upload`
+      this.axios.post(api, formData)
+        .then((response) => {
+          if (response.data.success) {
+            this.tempProduct.imageUrl = response.data.imageUrl
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
   },
   mounted () {
