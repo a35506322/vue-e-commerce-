@@ -12,7 +12,9 @@ import HelloWorld from '@/components/HelloWorld.vue'
 export default {
   name: 'Home',
   data () {
-    console.log('API', process.env.VUE_APP_API)
+    return {
+
+    }
   },
   components: {
     HelloWorld

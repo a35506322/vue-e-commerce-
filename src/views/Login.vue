@@ -50,10 +50,10 @@ export default {
       const api = `${process.env.VUE_APP_PATH}admin/signin`
       this.axios.post(api, this.user)
         .then((response) => {
-          console.log(response)
           if (response.data.success) {
             // 解構賦值
             const { token, expired } = response.data
+            // 在此頁面設定cookie
             document.cookie = `hexToken=${token}; expires=${new Date(expired)}`
             // push有歷史紀錄
             this.$router.push('/dashboard')

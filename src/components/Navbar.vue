@@ -32,7 +32,6 @@ export default {
       const api = `${process.env.VUE_APP_PATH}logout`
       this.axios.post(api, '')
         .then((response) => {
-          console.log(response)
           if (response.data.success) {
             this.$router.push('/login')
           }

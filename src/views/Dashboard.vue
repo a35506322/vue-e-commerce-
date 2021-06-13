@@ -1,6 +1,6 @@
 <template>
   <nav-bar></nav-bar>
-  <div class="container">
+  <div class="container-fluid">
     <router-view></router-view>
   </div>
 </template>
@@ -12,9 +12,9 @@ import navBar from '../components/Navbar.vue'
 export default {
   created () {
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1')
-    console.log(token)
     this.$http.defaults.headers.common.Authorization = token
     const api = `${process.env.VUE_APP_PATH}api/user/check`
+    // 登入未成功返回登入頁面
     this.$http.post(api, '').then((res) => {
       if (!res.data.success) {
         this.$router.push('login')
