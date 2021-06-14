@@ -1,7 +1,7 @@
 <template>
   <div class="modal fade" id="exampleModal" tabindex="-1"
     aria-labelledby="exampleModalLabel" aria-hidden="true"
-    ref="productModel">
+    ref="model">
     <div class="modal-dialog modal-xl" role="document">
       <div class="modal-content border-0">
         <div class="modal-header bg-dark text-white">
@@ -113,30 +113,11 @@
 </template>
 
 <script>
-import Modal from '../../node_modules/bootstrap/js/dist/modal.js'
+import ModelMixins from '../mixins/ModelMixins.js'
 
 export default {
-  props: {
-    product: {
-      type: Object,
-      default () {
-        return {}
-      }
-    }
-  },
-  data () {
-    return {
-      model: {},
-      tempProduct: {}
-    }
-  },
+  mixins: [ModelMixins],
   methods: {
-    showModel () {
-      this.model.show()
-    },
-    hideModel () {
-      this.model.hide()
-    },
     sure () {
       this.$emit('update-product', this.tempProduct)
     },
@@ -155,14 +136,6 @@ export default {
         .catch((error) => {
           console.log(error)
         })
-    }
-  },
-  mounted () {
-    this.model = new Modal(this.$refs.productModel)
-  },
-  watch: {
-    product (n, o) {
-      this.tempProduct = this.product
     }
   }
 }

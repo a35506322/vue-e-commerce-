@@ -1,6 +1,7 @@
 <template>
   <nav-bar></nav-bar>
-  <div class="container-fluid">
+  <div class="container-fluid mt-3 position-relative">
+    <toast-message></toast-message>
     <router-view></router-view>
   </div>
 </template>
@@ -8,8 +9,16 @@
 <script>
 // import { cookieFuc } from '../JS/cookie.js'
 import navBar from '../components/Navbar.vue'
+import emitter from '../methods/emitter.js'
+import ToastMessage from '../components/ToastMessage.vue'
 
 export default {
+  // 外層注入子層皆可以使用此套件搭配inject
+  provide () {
+    return {
+      emitter
+    }
+  },
   created () {
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1')
     this.$http.defaults.headers.common.Authorization = token
@@ -20,6 +29,9 @@ export default {
         this.$router.push('/login')
       }
     })
+  },
+  mounted () {
+    emitter.emit('message', { title: '登入成功' })
   },
   // 此方法錯誤應該再畫面還沒生成就要檢查
   // mounted () {
@@ -38,7 +50,8 @@ export default {
   //     })
   // },
   components: {
-    navBar
+    navBar,
+    ToastMessage
   }
 }
 </script>
