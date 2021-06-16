@@ -20,10 +20,10 @@
         <td>{{ item.category }}</td>
         <td>{{ item.title }}</td>
         <td class="text-right">
-          {{ item.origin_price }}
+          {{ $filters.currency (item.origin_price) }}
         </td>
         <td class="text-right">
-          {{ item.price }}
+          {{ $filters.currency (item.price) }}
         </td>
         <td>
           <span class="text-success" v-if="item.is_enabled">啟用</span>
@@ -38,6 +38,7 @@
       </tr>
     </tbody>
   </table>
+  <pagination v-bind="pagination" v-on:emit-page="updatePages"></pagination>
   <product-model ref="ProductModel" v-bind:product="tempProduct" v-on:update-product="updateProduct"></product-model>
   <del-model ref="DelModel" v-bind:product="tempProduct" v-on:del-product="delProduct"></del-model>
 </template>
@@ -45,6 +46,7 @@
 <script>
 import ProductModel from '../components/ProductModel.vue'
 import DelModel from '../components/DelModel.vue'
+import Pagination from '../components/Pagination.vue'
 
 export default {
   data () {
@@ -63,17 +65,19 @@ export default {
   },
   components: {
     ProductModel,
-    DelModel
+    DelModel,
+    Pagination
   },
-  inject: ['emitter'],
+  inject: ['emitter', '$httpMessageState'],
   methods: {
     // 得到全部產品
-    getProducts () {
-      const api = `${process.env.VUE_APP_PATH}api/${process.env.VUE_APP_API}/admin/products`
+    getProducts (page = 1) {
+      const api = `${process.env.VUE_APP_PATH}api/${process.env.VUE_APP_API}/admin/products?page=${page}`
       this.isLoading = true
       this.axios.get(api)
         .then((response) => {
           if (response.data.success) {
+            console.log(response)
             this.products = response.data.products
             this.pagination = response.data.pagination
             this.isLoading = false
@@ -107,15 +111,11 @@ export default {
       }
       this.axios[method](api, { data: this.tempProduct })
         .then((response) => {
-          console.log(response)
           const status = this.isNew ? '新增' : '更新'
+          const page = this.isNew ? 1 : this.pagination.current_page
           this.$refs.ProductModel.hideModel()
-          if (response.data.success) {
-            this.emitter.emit('message', { title: `${status}成功`, content: `產品名稱:${this.tempProduct.title}` })
-          } else {
-            this.emitter.emit('message', { style: 'danger', title: `${status}失敗`, content: response.data.message.join('、') })
-          }
-          this.getProducts()
+          this.$httpMessageState(response, status)
+          this.getProducts(page)
           this.isLoading = false
         })
         .catch((error) => {
@@ -128,17 +128,16 @@ export default {
       this.axios.delete(api)
         .then((response) => {
           this.$refs.DelModel.hideModel()
-          if (response.data.success) {
-            this.emitter.emit('message', { title: '刪除成功', content: `產品名稱: ${this.tempProduct.title}` })
-          } else {
-            this.emitter.emit('message', { style: 'danger', title: '刪除失敗', content: response.data.message.join('、') })
-          }
-          this.getProducts()
+          this.$httpMessageState(response, '刪除')
+          this.getProducts(this.pagination.current_page)
           this.isLoading = false
         })
         .catch((error) => {
           console.log(error)
         })
+    },
+    updatePages (val) {
+      this.getProducts(val)
     }
   },
   created () {
