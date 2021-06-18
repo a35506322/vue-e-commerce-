@@ -2,7 +2,7 @@
   <Loading :active="isLoading" :is-full-page="Boolean('true')"></Loading>
   <div class="text-end">
     <button type="button" class="btn btn-primary"
-    v-on:click="openModel(true)">新增產品</button>
+    v-on:click="openModal(true)">新增產品</button>
   </div>
   <table class="table mt-4">
     <thead>
@@ -31,21 +31,21 @@
         </td>
         <td>
           <div class="btn-group">
-            <button class="btn btn-outline-primary btn-sm" v-on:click="openModel(false,item)">編輯</button>
-            <button class="btn btn-outline-danger btn-sm" v-on:click="openDelModel(item)">刪除</button>
+            <button class="btn btn-outline-primary btn-sm" v-on:click="openModal(false,item)">編輯</button>
+            <button class="btn btn-outline-danger btn-sm" v-on:click="openDelModal(item)">刪除</button>
           </div>
         </td>
       </tr>
     </tbody>
   </table>
-  <pagination v-bind="pagination" v-on:emit-page="updatePages"></pagination>
-  <product-model ref="ProductModel" v-bind:product="tempProduct" v-on:update-product="updateProduct"></product-model>
-  <del-model ref="DelModel" v-bind:product="tempProduct" v-on:del-product="delProduct"></del-model>
+  <pagination v-bind:pages="pagination" v-on:emit-page="updatePages"></pagination>
+  <product-modal ref="ProductModal" v-bind:data="tempProduct" v-on:update-product="updateProduct"></product-modal>
+  <del-product-modal ref="DelProductModal" v-bind:data="tempProduct" v-on:del-product="delProduct"></del-product-modal>
 </template>
 
 <script>
-import ProductModel from '../components/ProductModel.vue'
-import DelModel from '../components/DelModel.vue'
+import ProductModal from '../components/ProductModal.vue'
+import DelProductModal from '../components/DelProductModal.vue'
 import Pagination from '../components/Pagination.vue'
 
 export default {
@@ -64,8 +64,8 @@ export default {
     }
   },
   components: {
-    ProductModel,
-    DelModel,
+    ProductModal,
+    DelProductModal,
     Pagination
   },
   inject: ['emitter', '$httpMessageState'],
@@ -85,24 +85,24 @@ export default {
         })
     },
     // 開啟新增頁面
-    openModel (isNew, item) {
+    openModal (isNew, item) {
       if (isNew) {
         this.tempProduct = {}
       } else {
         this.tempProduct = { ...item }
       }
       this.isNew = isNew
-      const Model = this.$refs.ProductModel
-      Model.showModel()
+      const Modal = this.$refs.ProductModal
+      Modal.showModal()
     },
-    openDelModel (item) {
+    openDelModal (item) {
       this.tempProduct = { ...item }
-      const Model = this.$refs.DelModel
-      Model.showModel()
+      const Modal = this.$refs.DelProductModal
+      Modal.showModal()
     },
     updateProduct (item) {
       this.isLoading = true
-      this.tempProduct = item
+      this.tempProduct = { ...item }
       let api = `${process.env.VUE_APP_PATH}api/${process.env.VUE_APP_API}/admin/product`
       let method = 'post'
       if (!this.isNew) {
@@ -113,7 +113,7 @@ export default {
         .then((response) => {
           const status = this.isNew ? '新增' : '更新'
           const page = this.isNew ? 1 : this.pagination.current_page
-          this.$refs.ProductModel.hideModel()
+          this.$refs.ProductModal.hideModal()
           this.$httpMessageState(response, status)
           this.getProducts(page)
           this.isLoading = false
@@ -127,7 +127,7 @@ export default {
       const api = `${process.env.VUE_APP_PATH}api/${process.env.VUE_APP_API}/admin/product/${id}`
       this.axios.delete(api)
         .then((response) => {
-          this.$refs.DelModel.hideModel()
+          this.$refs.DelProductModal.hideModal()
           this.$httpMessageState(response, '刪除')
           this.getProducts(this.pagination.current_page)
           this.isLoading = false

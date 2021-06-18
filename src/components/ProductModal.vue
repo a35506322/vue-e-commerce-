@@ -1,7 +1,7 @@
 <template>
   <div class="modal fade" id="exampleModal" tabindex="-1"
     aria-labelledby="exampleModalLabel" aria-hidden="true"
-    ref="model">
+    ref="modal">
     <div class="modal-dialog modal-xl" role="document">
       <div class="modal-content border-0">
         <div class="modal-header bg-dark text-white">
@@ -17,7 +17,7 @@
               <div class="mb-3">
                 <label for="image" class="form-label">輸入圖片網址</label>
                 <input type="text" class="form-control" id="image"
-                        placeholder="請輸入圖片連結" v-model="tempProduct.imageUrl">
+                        placeholder="請輸入圖片連結" v-model="tempData.imageUrl">
               </div>
               <div class="mb-3">
                 <label for="customFile" class="form-label">或 上傳圖片
@@ -46,19 +46,19 @@
               <div class="mb-3">
                 <label for="title" class="form-label">標題</label>
                 <input type="text" class="form-control" id="title"
-                        placeholder="請輸入標題" v-model="tempProduct.title">
+                        placeholder="請輸入標題" v-model="tempData.title">
               </div>
 
               <div class="row gx-2">
                 <div class="mb-3 col-md-6">
                   <label for="category" class="form-label">分類</label>
                   <input type="text" class="form-control" id="category"
-                          placeholder="請輸入分類" v-model="tempProduct.category">
+                          placeholder="請輸入分類" v-model="tempData.category">
                 </div>
                 <div class="mb-3 col-md-6">
                   <label for="price" class="form-label">單位</label>
                   <input type="text" class="form-control" id="unit"
-                          placeholder="請輸入單位" v-model="tempProduct.unit">
+                          placeholder="請輸入單位" v-model="tempData.unit">
                 </div>
               </div>
 
@@ -66,12 +66,12 @@
                 <div class="mb-3 col-md-6">
                   <label for="origin_price" class="form-label">原價</label>
                   <input type="number" class="form-control" id="origin_price"
-                          placeholder="請輸入原價" v-model.number="tempProduct.origin_price">
+                          placeholder="請輸入原價" v-model.number="tempData.origin_price">
                 </div>
                 <div class="mb-3 col-md-6">
                   <label for="price" class="form-label">售價</label>
                   <input type="number" class="form-control" id="price"
-                          placeholder="請輸入售價" v-model.number="tempProduct.price">
+                          placeholder="請輸入售價" v-model.number="tempData.price">
                 </div>
               </div>
               <hr>
@@ -79,12 +79,12 @@
               <div class="mb-3">
                 <label for="description" class="form-label">產品描述</label>
                 <textarea type="text" class="form-control" id="description"
-                          placeholder="請輸入產品描述" v-model="tempProduct.description"></textarea>
+                          placeholder="請輸入產品描述" v-model="tempData.description"></textarea>
               </div>
               <div class="mb-3">
                 <label for="content" class="form-label">說明內容</label>
                 <textarea type="text" class="form-control" id="content"
-                          placeholder="請輸入產品說明內容" v-model="tempProduct.content"></textarea>
+                          placeholder="請輸入產品說明內容" v-model="tempData.content"></textarea>
               </div>
               <div class="mb-3">
                 <div class="form-check">
@@ -92,7 +92,7 @@
                           :true-value="1"
                           :false-value="0"
                           id="is_enabled"
-                          v-model="tempProduct.is_enabled">
+                          v-model="tempData.is_enabled">
                   <label class="form-check-label" for="is_enabled">
                     是否啟用
                   </label>
@@ -113,13 +113,13 @@
 </template>
 
 <script>
-import ModelMixins from '../mixins/ModelMixins.js'
+import ModalMixins from '../mixins/ModalMixins.js'
 
 export default {
-  mixins: [ModelMixins],
+  mixins: [ModalMixins],
   methods: {
     sure () {
-      this.$emit('update-product', this.tempProduct)
+      this.$emit('update-product', this.tempData)
     },
     // 將圖片轉成可用網址,這邊需要再研究一下
     uploadFile () {
@@ -130,7 +130,7 @@ export default {
       this.axios.post(api, formData)
         .then((response) => {
           if (response.data.success) {
-            this.tempProduct.imageUrl = response.data.imageUrl
+            this.tempData.imageUrl = response.data.imageUrl
           }
         })
         .catch((error) => {

@@ -1,18 +1,18 @@
 <template>
   <div class="modal fade" id="exampleModal" tabindex="-1"
     aria-labelledby="exampleModalLabel" aria-hidden="true"
-    ref="model">
+    ref="modal">
     <div class="modal-dialog" role="document">
       <div class="modal-content border-0">
         <div class="modal-header bg-danger text-white">
           <h5 class="modal-title">
-            <span>刪除 {{ tempProduct.title }}</span>
+            <span>刪除 {{ tempData.title }}</span>
           </h5>
           <button type="button" class="btn-close"
                   data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          是否刪除 <strong class="text-danger">{{ tempProduct.title }}</strong> (刪除後將無法恢復)。
+          是否刪除 <strong class="text-danger">{{ tempData.title }}</strong> (刪除後將無法恢復)。
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary"
@@ -27,13 +27,13 @@
 </template>
 
 <script>
-import ModelMixins from '../mixins/ModelMixins.js'
+import ModalMixins from '../mixins/ModalMixins.js'
 
 export default {
-  mixins: [ModelMixins],
+  mixins: [ModalMixins],
   methods: {
     sureDel () {
-      this.$emit('del-product', this.tempProduct.id)
+      this.$emit('del-product', this.tempData.id)
     }
   }
 }

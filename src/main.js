@@ -7,13 +7,14 @@ import 'vue3-loading-overlay/dist/vue3-loading-overlay.css'
 
 import App from './App.vue'
 import router from './router'
-import { currency } from './methods/filters.js'
+import { currency, ToLocalDate } from './methods/filters.js'
 
 // 全域註冊元件
 const app = createApp(App)
 // 全域註冊方法
 app.config.globalProperties.$filters = {
-  currency
+  currency,
+  ToLocalDate
 }
 app.use(VueAxios, axios)
 app.use(router)
