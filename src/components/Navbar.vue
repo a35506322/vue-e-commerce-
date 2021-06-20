@@ -8,10 +8,13 @@
       <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <router-link class="nav-link" to="/dashboard/products">產品列表</router-link>
+            <router-link class="nav-link" to="/dashboard/products">產品</router-link>
           </li>
           <li class="nav-itme">
-            <router-link class="nav-link" to="/dashboard/orders">訂單列表</router-link>
+            <router-link class="nav-link" to="/dashboard/orders">訂單</router-link>
+          </li>
+          <li class="nav-itme">
+            <router-link class="nav-link" to="/dashboard/coupons">優惠卷</router-link>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" v-on:click.prevent="logout">登出</a>

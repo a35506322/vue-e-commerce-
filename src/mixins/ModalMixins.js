@@ -28,7 +28,8 @@ export default {
   },
   watch: {
     data (n, o) {
-      this.tempData = this.data
+      // 記住單向資料流,很容易踩到物件的傳參考特性的雷
+      this.tempData = { ...this.data }
     }
   }
 }

@@ -4,6 +4,6 @@ export function currency (num) {
 }
 
 export function ToLocalDate (date) {
-  var localDate = new Date(date * 1000).toLocaleDateString()
+  var localDate = new Date(date * 1000).toLocaleDateString().replace(/\//g, '-')
   return localDate
 }
