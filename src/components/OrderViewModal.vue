@@ -27,7 +27,7 @@
                     <th colspan="4" class="fs-2 text-left">用戶資料</th>
                   </tr>
                 </thead>
-                <tbody v-if="tempData.user">
+                <tbody>
                   <tr>
                     <th scope="row">姓名</th>
                     <td colspan="3">{{ tempData.user.name }}</td>

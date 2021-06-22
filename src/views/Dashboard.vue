@@ -23,6 +23,7 @@ export default {
   },
   created () {
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1')
+    // headers 加了token 進行驗證,但她用戶端跟後台取的資料不一樣
     this.$http.defaults.headers.common.Authorization = token
     const api = `${process.env.VUE_APP_PATH}api/user/check`
     // 登入未成功返回登入頁面

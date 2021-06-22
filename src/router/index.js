@@ -36,8 +36,20 @@ const routes = [
       },
       {
         path: 'coupons',
-        names: 'coupons',
+        name: 'coupons',
         component: () => import('../views/Coupons.vue')
+      }
+    ]
+  },
+  {
+    path: '/user',
+    name: 'user',
+    component: () => import('../views/Userboard.vue'),
+    children: [
+      {
+        path: 'usercar',
+        name: 'usercar',
+        component: () => import('../views/Usercar.vue')
       }
     ]
   }
