@@ -50,6 +50,16 @@ const routes = [
         path: 'usercar',
         name: 'usercar',
         component: () => import('../views/Usercar.vue')
+      },
+      {
+        path: 'product/:id',
+        name: 'product',
+        component: () => import('../views/Useproduct.vue'),
+        props: (route) => {
+          return {
+            id: route.params.id
+          }
+        }
       }
     ]
   }
