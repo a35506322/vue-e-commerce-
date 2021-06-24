@@ -17,7 +17,7 @@
       <tr v-for="(item, index) in coupons" v-bind:key="'key'+index">
         <td>{{item.title}}</td>
         <td class="text-right">
-          {{item.percent}}
+          {{item.percent}}%
         </td>
         <td class="text-right">
           {{ $filters.ToLocalDate(item.due_date)}}
