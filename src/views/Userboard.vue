@@ -16,12 +16,14 @@
 <script>
 import emitter from '../methods/emitter.js'
 import ToastMessage from '../components/ToastMessage.vue'
+import $httpMessageState from '../methods/httpMessageState'
 
 export default {
   // 外層注入子層皆可以使用此套件搭配inject
   provide () {
     return {
-      emitter
+      emitter,
+      $httpMessageState
     }
   },
   components: {

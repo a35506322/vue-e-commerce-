@@ -60,6 +60,16 @@ const routes = [
             id: route.params.id
           }
         }
+      },
+      {
+        path: 'checkout/:orderid',
+        name: 'checkout',
+        component: () => import('../views/UserCheckOut.vue'),
+        props: (route) => {
+          return {
+            orderid: route.params.orderid
+          }
+        }
       }
     ]
   }

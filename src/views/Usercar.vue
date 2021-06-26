@@ -42,7 +42,7 @@
           </tbody>
         </table>
       </div>
-      <div class="col-md-5">
+      <div class="col-md-5 mt-4">
         <div class="sticky-top">
           <table class="table align-middle">
             <thead>
@@ -53,7 +53,7 @@
                 <th>單價</th>
               </tr>
             </thead>
-            <tbody v-if="carts.length>0">
+            <tbody v-if="carts.length > 0">
               <tr v-for="(item,index) in carts" v-bind:key="'key'+index">
                 <td>
                   <button type="button" class="btn btn-outline-danger btn-sm" v-on:click="deleteCar(item.id)">
@@ -62,7 +62,7 @@
                 </td>
                 <td>
                   {{item.product.title}}
-                  <div class="text-success" v-if="status.isCoupon">
+                  <div class="text-success" v-if="item.hasOwnProperty('coupon')">
                     已套用優惠券
                   </div>
                 </td>
@@ -76,7 +76,7 @@
                 </td>
                 <td class="text-end">
                   {{item.product.price}}
-                  <small class="text-success" v-if="status.isCoupon">折扣價：{{item.final_total}}</small>
+                  <small class="text-success" v-if="item.hasOwnProperty('coupon')">折扣價：{{item.final_total}}</small>
                 </td>
               </tr>
             </tbody>
@@ -85,7 +85,7 @@
               <td colspan="3" class="text-end">總計</td>
               <td class="text-end">{{total}}</td>
             </tr>
-            <tr v-if="status.isCoupon">
+            <tr v-if="total!==final_total">
               <td colspan="3" class="text-end text-success">折扣價</td>
               <td class="text-end text-success">{{final_total}}</td>
             </tr>
@@ -111,19 +111,19 @@
             <label for="email" class="form-label">Email address</label>
             <Field type="email" name="email" rules="required|email" class="form-control" v-bind:class="{'is-invalid':errors['email']}"
             id="email" placeholder="請輸入Emal" v-model="form.user.email"></Field>
-            <error-message name="user.email" class="invalid-feedback"></error-message>
+            <error-message name="email" class="invalid-feedback"></error-message>
           </div>
           <div class="mb-3">
-            <label for="recipient" class="form-label">收件人姓名</label>
-            <Field class="form-control" name="recipient" id="recipient" rules="required" v-bind:class="{'is-invalid':errors['recipient']}"
-            placeholder="請輸入姓名" v-model="form.user.recipient"></Field>
-            <error-message name="recipient" class="invalid-feedback"></error-message>
+            <label for="name" class="form-label">收件人姓名</label>
+            <Field class="form-control" name="name" id="name" rules="required" v-bind:class="{'is-invalid':errors['name']}"
+            placeholder="請輸入姓名" v-model="form.user.name"></Field>
+            <error-message name="name" class="invalid-feedback"></error-message>
           </div>
           <div class="mb-3">
-            <label for="phone" class="form-label">收件人電話</label>
-            <Field class="form-control" name="phone" id="phone" rules="required" v-bind:class="{'is-invalid':errors['phone']}"
-            placeholder="請輸入電話" v-model="form.user.phone"></Field>
-            <error-message name="phone" class="invalid-feedback"></error-message>
+            <label for="tel" class="form-label">收件人電話</label>
+            <Field class="form-control" name="tel" id="tel" rules="required" v-bind:class="{'is-invalid':errors['tel']}"
+            placeholder="請輸入電話" v-model="form.user.tel"></Field>
+            <error-message name="tel" class="invalid-feedback"></error-message>
           </div>
           <div class="mb-3">
             <label for="address" class="form-label">收件人地址</label>
@@ -132,8 +132,8 @@
             <error-message name="address" class="invalid-feedback"></error-message>
           </div>
           <div class="mb-3">
-            <label for="leave_message" class="form-label">留言</label>
-            <Field class="form-control" name="leave_message" id="leave_message" rows="3" v-model="form.leave_message" as="textarea"></Field>
+            <label for="message" class="form-label">留言</label>
+            <Field class="form-control" name="message" id="message" rows="3" v-model="form.message" as="textarea"></Field>
           </div>
           <div class="text-end">
             <!--meta 驗證狀況 => valid 為全部驗證過 -->
@@ -151,7 +151,6 @@
 
 <script>
 import Pagination from '../components/Pagination.vue'
-
 export default {
   data () {
     return {
@@ -162,8 +161,7 @@ export default {
       // 判定開關狀態
       status: {
         isLoadingItem: '',
-        isUpdateLoading: false,
-        isCoupon: false
+        isUpdateLoading: false
       },
       // 購物車列表
       carts: [],
@@ -178,33 +176,16 @@ export default {
       // 使用者填寫資料
       form: {
         user: {
-          recipient: '',
+          name: '',
           email: '',
-          phone: '',
+          tel: '',
           address: ''
         },
-        leave_message: ''
-      },
-      schema: {
-        form: {
-          user: {
-            recipient: '',
-            email: '',
-            phone: '',
-            address: ''
-          },
-          leave_message: ''
-        }
+        message: ''
       }
-      // 驗證內容
-      // schema: {
-      //   form.user.email: 'required|email',
-      //   form.user.recipient: 'required',
-      //   form.user.phone: 'required',
-      //   form.user.address: 'required'
-      // }
     }
   },
+  inject: ['emitter', '$httpMessageState'],
   components: {
     Pagination
   },
@@ -215,12 +196,13 @@ export default {
       this.isLoading = true
       this.axios.get(api)
         .then((response) => {
-          console.log(response)
           if (response.data.success) {
             this.products = response.data.products
             this.pagination = response.data.pagination
-            this.isLoading = false
+          } else {
+            this.$httpMessageState(response, '開啟產品')
           }
+          this.isLoading = false
         })
         .catch((error) => {
           console.log(error)
@@ -240,13 +222,15 @@ export default {
       this.isLoading = true
       this.axios.get(api)
         .then((response) => {
-          console.log(response)
           if (response.data.success) {
+            console.log(response)
             this.carts = response.data.data.carts
             this.total = response.data.data.total
             this.final_total = response.data.data.final_total
-            this.isLoading = false
+          } else {
+            this.$httpMessageState(response, '開啟購物車')
           }
+          this.isLoading = false
         })
         .catch((error) => {
           console.log(error)
@@ -260,10 +244,11 @@ export default {
       this.axios.post(api, { data: { product_id: id, qty: 1 } })
         .then((response) => {
           if (response.data.success) {
-            this.status.isLoadingItem = ''
             this.getCarts()
-            this.isLoading = false
           }
+          this.$httpMessageState(response, '新增購物車')
+          this.status.isLoadingItem = ''
+          this.isLoading = false
         })
         .catch((error) => {
           console.log(error)
@@ -277,8 +262,9 @@ export default {
         .then((response) => {
           if (response.data.success) {
             this.getCarts()
-            this.isLoading = false
           }
+          this.$httpMessageState(response, '刪除購物車')
+          this.isLoading = false
         })
         .catch((error) => {
           console.log(error)
@@ -297,9 +283,10 @@ export default {
         .then((respone) => {
           if (respone.data.success) {
             this.getCarts()
-            this.isLoading = false
-            this.status.isUpdateLoading = false
           }
+          this.$httpMessageState(respone, '更新購物車')
+          this.isLoading = false
+          this.status.isUpdateLoading = false
         })
         .catch((error) => {
           console.log(error)
@@ -311,25 +298,39 @@ export default {
       this.status.isUpdateLoading = true
       this.axios.post(api, { data: { code: this.coupon_code } })
         .then((respone) => {
+          console.log(respone)
           if (respone.data.success) {
             this.getCarts()
-            this.isLoading = false
-            this.status.isCoupon = true
-            this.status.isUpdateLoading = false
           }
+          this.$httpMessageState(respone, '新增優惠卷')
+          this.status.isUpdateLoading = false
+          this.isLoading = false
         })
         .catch((error) => {
           console.log(error)
         })
     },
-    onSubmit (values, { restForm }) {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve(JSON.stringify(this.values))
-        }, 2000)
-        // 重製表單
-        restForm()
-      })
+    onSubmit (values, { resetForm }) {
+      const api = `${process.env.VUE_APP_PATH}api/${process.env.VUE_APP_API}/order`
+      const data = {
+        data: {
+          ...this.form
+        }
+      }
+      this.isLoading = true
+      this.axios.post(api, data)
+        .then((response) => {
+          if (response.data.success) {
+            console.log(response)
+            this.getCarts()
+            resetForm()
+            this.$router.push(`/user/checkout/${response.data.orderId}`)
+          }
+          this.isLoading = false
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
   },
   created () {

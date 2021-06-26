@@ -108,9 +108,9 @@
                       v-for="(product, index) in tempData.products"
                       v-bind:key="'key' + index"
                     >
-                      <th scope="row">{{ product.id }}</th>
-                      <td colspan="4">{{ product.product_id }}</td>
-                      <td colspan="4">{{ product.qty }}</td>
+                      <th scope="row">{{ product.product.title }}</th>
+                      <td colspan="4">{{ `${product.qty}/${product.product.unit}` }}</td>
+                      <td colspan="4">{{ product.total }}</td>
                     </tr>
                   </tbody>
                 </table>
